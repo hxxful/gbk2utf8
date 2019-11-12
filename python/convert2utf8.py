@@ -60,21 +60,25 @@ def convert(filename, seq, out_enc="UTF-8"):
         if None != source_encoding:  # 空的文件,返回None
             s = ""
             if source_encoding != 'utf-8':
-                content = content.decode(source_encoding).encode(out_enc)
+                if source_encoding == 'GB2312':
+                    content = content.decode('GB18030').encode(out_enc)
+                else:
+                    content = content.decode(source_encoding).encode(out_enc)
                 codecs.open(filename, 'w').write(content)
-                s = "Convert to utf-8 done! %s" % (fname)
+                s = "<---ok--->"
             else:
-                s = "Doesn't do anything. %s" % (fname)
+                s = "do nothing"
 
-            str = "%s=%s \n\t%s" % (source_encoding, filename, s)
+            str = s
 
         else:
-            str = "None. %s " % (filename)
+            str = "not find"
 
     except IOError as err:
         str = "I/O error:{0}".format(err)
     # sleep(1)
-    logging.info("seq=%s, consume=%s seconds \n\t%s", seq, time() - start_time, str)
+    #logging.info("seq=%s, consume=%s seconds \n\t%s", seq, time() - start_time, str)
+    logging.info("[%15s]->[UTF-8]=[%s]\t%s", source_encoding.upper(), str, filename)
     return seq
 
 
@@ -121,9 +125,8 @@ def main():
     # explore(srcPath, ['.xml', '.java', '.js', '.txt', '.css', '.jsp', '.html', '.htm', '.tpl'])
     exploreThread(srcPath, ['.c', '.cpp', '.h', '.xml', '.java', '.js', '.txt', '.css', '.jsp', '.html', '.htm', '.tpl'])
 
-logging.basicConfig(level=logging.INFO,
-                    format='%(levelname)s %(asctime)s %(processName)s %(threadName)s %(message)s',
-                    datefmt='%Y-%m-%d %I:%M:%S')
+#logging.basicConfig(level=logging.INFO, format='%(levelname)s %(asctime)s %(processName)s %(threadName)s %(message)s', datefmt='%Y-%m-%d %I:%M:%S')
+logging.basicConfig(level=logging.INFO, format='')
 
 if __name__ == "__main__":
     main()
